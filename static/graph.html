@@ -1,0 +1,512 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Transaction Network Graph</title>
+        <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+        <style>
+            body { 
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); 
+                margin: 0; 
+                font-family: 'Segoe UI', sans-serif; 
+                color: white;
+            }
+            #network { 
+                width: 100%; 
+                height: 600px; 
+                border: 2px solid #00d4aa; 
+                border-radius: 10px;
+                background: #0f0f23;
+            }
+            .info { 
+                text-align: center; 
+                padding: 20px;
+                background: rgba(255,255,255,0.1);
+                backdrop-filter: blur(10px);
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .legend {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin: 10px;
+                flex-wrap: wrap;
+            }
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: rgba(255,255,255,0.1);
+                padding: 5px 10px;
+                border-radius: 15px;
+                font-size: 12px;
+            }
+            .legend-color {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="info">
+            <h2 style="color: #00d4aa; margin-bottom: 10px;">Transaction Network Graph</h2>
+            <p>Nodes: 30 | Transactions: 15</p>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FF4444;"></div>
+                <span>High Risk (>₹1L)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FF8800;"></div>
+                <span>Medium-High (>₹50K)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FFAA00;"></div>
+                <span>Medium Risk</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #87CEEB;"></div>
+                <span>Low-Medium</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #90EE90;"></div>
+                <span>Low Risk</span>
+            </div>
+        </div>
+        
+        <div id="network"></div>
+        
+        <script>
+            // Create nodes array
+            var nodes = new vis.DataSet([
+    
+                {
+                    id: "ACC201",
+                    label: "ACC201",
+                    color: "#FFAA00",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC202",
+                    label: "ACC202",
+                    color: "#87CEEB",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC203",
+                    label: "ACC203",
+                    color: "#FFAA00",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC204",
+                    label: "ACC204",
+                    color: "#87CEEB",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC205",
+                    label: "ACC205",
+                    color: "#FFAA00",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC206",
+                    label: "ACC206",
+                    color: "#87CEEB",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC207",
+                    label: "ACC207",
+                    color: "#FFAA00",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC208",
+                    label: "ACC208",
+                    color: "#87CEEB",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC209",
+                    label: "ACC209",
+                    color: "#87CEEB",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC210",
+                    label: "ACC210",
+                    color: "#90EE90",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC211",
+                    label: "ACC211",
+                    color: "#FF4444",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC212",
+                    label: "ACC212",
+                    color: "#FF8800",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC213",
+                    label: "ACC213",
+                    color: "#FFAA00",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC214",
+                    label: "ACC214",
+                    color: "#87CEEB",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC215",
+                    label: "ACC215",
+                    color: "#FFAA00",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC216",
+                    label: "ACC216",
+                    color: "#87CEEB",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC217",
+                    label: "ACC217",
+                    color: "#FF4444",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC218",
+                    label: "ACC218",
+                    color: "#FF8800",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC219",
+                    label: "ACC219",
+                    color: "#FFAA00",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC220",
+                    label: "ACC220",
+                    color: "#87CEEB",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC221",
+                    label: "ACC221",
+                    color: "#FFAA00",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC222",
+                    label: "ACC222",
+                    color: "#87CEEB",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC223",
+                    label: "ACC223",
+                    color: "#FFAA00",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC224",
+                    label: "ACC224",
+                    color: "#87CEEB",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC225",
+                    label: "ACC225",
+                    color: "#FF4444",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC226",
+                    label: "ACC226",
+                    color: "#FF8800",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC227",
+                    label: "ACC227",
+                    color: "#FFAA00",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC228",
+                    label: "ACC228",
+                    color: "#87CEEB",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC229",
+                    label: "ACC229",
+                    color: "#FFAA00",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+                {
+                    id: "ACC230",
+                    label: "ACC230",
+                    color: "#87CEEB",
+                    font: { color: "white", size: 14 },
+                    borderWidth: 2,
+                    size: 25
+                },
+            ]);
+            
+            // Create edges array
+            var edges = new vis.DataSet([
+    
+                {
+                    from: "ACC201",
+                    to: "ACC202",
+                    label: "₹65,000",
+                    color: "#FFAA00",
+                    width: 3.25,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC203",
+                    to: "ACC204",
+                    label: "₹72,000",
+                    color: "#FFAA00",
+                    width: 3.6,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC205",
+                    to: "ACC206",
+                    label: "₹55,000",
+                    color: "#FFAA00",
+                    width: 2.75,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC207",
+                    to: "ACC208",
+                    label: "₹89,000",
+                    color: "#FFAA00",
+                    width: 4.45,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC209",
+                    to: "ACC210",
+                    label: "₹43,000",
+                    color: "#00d4aa",
+                    width: 2.15,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC211",
+                    to: "ACC212",
+                    label: "₹125,000",
+                    color: "#FF4444",
+                    width: 6.25,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC213",
+                    to: "ACC214",
+                    label: "₹98,000",
+                    color: "#FFAA00",
+                    width: 4.9,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC215",
+                    to: "ACC216",
+                    label: "₹87,000",
+                    color: "#FFAA00",
+                    width: 4.35,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC217",
+                    to: "ACC218",
+                    label: "₹156,000",
+                    color: "#FF4444",
+                    width: 7.8,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC219",
+                    to: "ACC220",
+                    label: "₹67,000",
+                    color: "#FFAA00",
+                    width: 3.35,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC221",
+                    to: "ACC222",
+                    label: "₹91,000",
+                    color: "#FFAA00",
+                    width: 4.55,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC223",
+                    to: "ACC224",
+                    label: "₹78,000",
+                    color: "#FFAA00",
+                    width: 3.9,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC225",
+                    to: "ACC226",
+                    label: "₹135,000",
+                    color: "#FF4444",
+                    width: 6.75,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC227",
+                    to: "ACC228",
+                    label: "₹52,000",
+                    color: "#FFAA00",
+                    width: 2.6,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+                {
+                    from: "ACC229",
+                    to: "ACC230",
+                    label: "₹84,000",
+                    color: "#FFAA00",
+                    width: 4.2,
+                    arrows: "to",
+                    font: { color: "white", size: 12 }
+                },
+            ]);
+            
+            // Create network
+            var container = document.getElementById('network');
+            var data = { nodes: nodes, edges: edges };
+            var options = {
+                physics: {
+                    enabled: true,
+                    barnesHut: {
+                        gravitationalConstant: -2000,
+                        centralGravity: 0.3,
+                        springLength: 100,
+                        springConstant: 0.04,
+                        damping: 0.09
+                    },
+                    stabilization: { iterations: 200 }
+                },
+                nodes: {
+                    shape: 'dot',
+                    scaling: {
+                        min: 20,
+                        max: 50
+                    }
+                },
+                edges: {
+                    smooth: { type: 'continuous' }
+                },
+                interaction: {
+                    hover: true,
+                    tooltipDelay: 200
+                }
+            };
+            
+            var network = new vis.Network(container, data, options);
+            
+            // Add click event
+            network.on("click", function(params) {
+                if (params.nodes.length > 0) {
+                    var nodeId = params.nodes[0];
+                    alert('Account: ' + nodeId + '\nClick and drag to move nodes');
+                }
+            });
+        </script>
+    </body>
+    </html>
+    

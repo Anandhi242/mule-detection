@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Graph - Mule Detection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(0, 212, 170, 0.3);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #00d4aa;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #ddd;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(0, 212, 170, 0.2);
+            color: #00d4aa;
+        }
+
+        .logout-btn {
+            color: #ff6b6b;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ff6b6b;
+            border-radius: 5px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00d4aa, #007991);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .red { background: #FF4444; }
+        .orange { background: #FF8800; }
+        .yellow { background: #FFAA00; }
+        .lightblue { background: #87CEEB; }
+        .lightgreen { background: #90EE90; }
+
+        .graph-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .graph-frame {
+            width: 100%;
+            height: 700px;
+            border: none;
+            border-radius: 15px;
+            background: #1a1a1a;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 212, 170, 0.2);
+            border-color: #00d4aa;
+        }
+
+        .graph-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .info-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #00d4aa;
+        }
+
+        .info-title {
+            color: #00d4aa;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-desc {
+            color: #b3b3b3;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4aa, #007991);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            background: rgba(220, 53, 69, 0.2);
+            border: 2px solid #dc3545;
+            color: #f8d7da;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .graph-frame {
+                height: 500px;
+            }
+            
+            .legend {
+                gap: 1rem;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">MULE DETECTION SYSTEM</div>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}">Dashboard</a>
+                <a href="{{ url_for('upload') }}">Upload</a>
+                <a href="{{ url_for('analysis') }}">Analysis</a>
+                <a href="#" class="active">Graph</a>
+                <a href="{{ url_for('risk_analysis') }}">Risk Analysis</a>
+            </div>
+            <div>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Transaction Network Graph</h1>
+            <p style="color: #b3b3b3; font-size: 1.2em;">Interactive visualization of account relationships and transaction flows</p>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color red"></div>
+                <span>High Risk (>₹1L)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color orange"></div>
+                <span>Medium-High Risk (>₹50K)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color yellow"></div>
+                <span>Medium Risk</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color lightblue"></div>
+                <span>Source Accounts</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color lightgreen"></div>
+                <span>Destination Accounts</span>
+            </div>
+        </div>
+
+        {% if graph_available %}
+        <div class="graph-container">
+            <iframe src="{{ url_for('view_graph') }}" class="graph-frame"></iframe>
+        </div>
+
+        <div class="graph-info">
+            <h3 style="color: #00d4aa; font-size: 1.8em; margin-bottom: 1rem; text-align: center;">
+                Graph Analysis Features
+            </h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-title">Node Interactions</div>
+                    <div class="info-desc">Click and drag nodes to explore relationships. Hover for account details.</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-title">Edge Weights</div>
+                    <div class="info-desc">Edge thickness represents transaction amounts. Thicker edges indicate larger transfers.</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-title">Color Coding</div>
+                    <div class="info-desc">Node colors indicate risk levels based on transaction patterns and amounts.</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-title">Network Clustering</div>
+                    <div class="info-desc">Closely connected nodes may indicate coordinated mule account activities.</div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="error-message">
+            <h3>Graph Not Available</h3>
+            <p>Unable to generate network graph. Please ensure transaction data is uploaded and try again.</p>
+        </div>
+        {% endif %}
+
+        <div class="nav-buttons">
+            <a href="{{ url_for('analysis') }}" class="nav-btn btn-secondary">
+                ← Back to Analysis
+            </a>
+            <a href="{{ url_for('risk_analysis') }}" class="nav-btn btn-primary">
+                View Risk Analysis →
+            </a>
+        </div>
+    </div>
+</body>
+</html>

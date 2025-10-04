@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Mule Detection System using HGT and Next - Gen Fraud Patterns</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(0, 212, 170, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #00d4aa;
+            text-shadow: 0 0 10px rgba(0, 212, 170, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #ddd;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(0, 212, 170, 0.2);
+            color: #00d4aa;
+            transform: translateY(-2px);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info span {
+            color: #b3b3b3;
+        }
+
+        .logout-btn {
+            color: #ff6b6b;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ff6b6b;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 3rem 0;
+        }
+
+        .hero-section h1 {
+            font-size: 4em;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00d4aa, #007991);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .hero-section p {
+            font-size: 1.4em;
+            color: #b3b3b3;
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .quick-start-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #00d4aa, #007991);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 212, 170, 0.3);
+        }
+
+        .quick-start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.5);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4aa, transparent);
+            transition: all 0.6s ease;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 212, 170, 0.2);
+            border-color: rgba(0, 212, 170, 0.5);
+        }
+
+        .feature-icon {
+            font-size: 4em;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .feature-card h3 {
+            color: #00d4aa;
+            margin-bottom: 1rem;
+            font-size: 1.5em;
+        }
+
+        .feature-card p {
+            color: #b3b3b3;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-link {
+            color: #00d4aa;
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .feature-link:hover {
+            border-bottom-color: #00d4aa;
+        }
+
+        .stats-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 212, 170, 0.3);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #00d4aa;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #b3b3b3;
+            font-size: 1.1em;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .alert.success {
+            background: rgba(40, 167, 69, 0.2);
+            border: 2px solid #28a745;
+            color: #d4edda;
+        }
+
+        .alert.warning {
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid #ffc107;
+            color: #fff3cd;
+        }
+
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero-section h1 {
+                font-size: 2.5em;
+            }
+
+            .main-container {
+                padding: 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">Mule Detection System using HGT and Next - Gen Fraud Patterns</div>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}" class="active">Dashboard</a>
+                <a href="{{ url_for('upload') }}">Upload Data</a>
+            </div>
+            <div class="user-info">
+                <span>Welcome, {{ user }}!</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1>Advanced Fraud Detection</h1>
+            <p>Leverage Hierarchical Graph Transformers and Next-Gen Fraud Pattern Detection to identify sophisticated mule account networks and financial crime</p>
+            <a href="{{ url_for('upload') }}" class="quick-start-btn">Upload Transaction Data</a>
+        </div>
+
+        <!-- System Stats -->
+        <div class="stats-section">
+            <h2 style="text-align: center; color: #00d4aa; margin-bottom: 2rem; font-size: 2em;">System Capabilities</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">10+</span>
+                    <div class="stat-label">Fraud Biomarkers</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">95%</span>
+                    <div class="stat-label">Detection Accuracy</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">Real-time</span>
+                    <div class="stat-label">Analysis Speed</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">HGT</span>
+                    <div class="stat-label">AI Technology</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <h3>Upload & Analyze</h3>
+                <p>Upload transaction data in JSON format and get comprehensive fraud analysis with advanced pattern detection algorithms</p>
+                <a href="{{ url_for('upload') }}" class="feature-link">Start Analysis →</a>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🔍</span>
+                <h3>Pattern Detection</h3>
+                <p>Identify sophisticated fraud patterns including crypto transfers, round-robin flows, reversal loops, and suspicious device sharing</p>
+                <a href="#" class="feature-link">Learn More →</a>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🌐</span>
+                <h3>Network Visualization</h3>
+                <p>Interactive graph visualization of account relationships, transaction flows, and suspicious network clusters</p>
+                <a href="#" class="feature-link">View Demo →</a>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <h3>Risk Scoring</h3>
+                <p>AI-powered risk assessment with detailed explanations for each flagged account and transaction pattern</p>
+                <a href="#" class="feature-link">Risk Analysis →</a>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🛡️</span>
+                <h3>Biomarker Detection</h3>
+                <p>Advanced detection of next-generation fraud patterns including headless browsers, cloud access, and fake merchant QR codes</p>
+                <a href="#" class="feature-link">View Biomarkers →</a>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📈</span>
+                <h3>Comprehensive Reports</h3>
+                <p>Detailed fraud analysis reports with actionable insights, risk scores, and evidence trails for regulatory compliance</p>
+                <a href="#" class="feature-link">Generate Reports →</a>
+            </div>
+        </div>
+    </div>

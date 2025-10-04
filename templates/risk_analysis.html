@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Analysis - Mule Detection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(0, 212, 170, 0.3);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #00d4aa;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #ddd;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(0, 212, 170, 0.2);
+            color: #00d4aa;
+        }
+
+        .logout-btn {
+            color: #ff6b6b;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ff6b6b;
+            border-radius: 5px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00d4aa, #007991);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .summary-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .summary-number {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .critical { color: #FF4444; }
+        .high { color: #FF8800; }
+        .medium { color: #FFAA00; }
+        .low { color: #44AA44; }
+
+        .summary-label {
+            color: #b3b3b3;
+            font-size: 1.1em;
+        }
+
+        .risk-table-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .table-title {
+            color: #00d4aa;
+            font-size: 2em;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(0, 212, 170, 0.2);
+            color: #00d4aa;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .risk-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            display: inline-block;
+            min-width: 70px;
+        }
+
+        .patterns-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .pattern-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #00d4aa;
+            transition: all 0.3s ease;
+        }
+
+        .pattern-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+
+        .pattern-title {
+            font-weight: bold;
+            color: #00d4aa;
+            margin-bottom: 0.5rem;
+            font-size: 1.2em;
+        }
+
+        .pattern-details {
+            color: #e0e0e0;
+            margin-bottom: 0.5rem;
+            font-size: 1em;
+        }
+
+        .pattern-description {
+            color: #b3b3b3;
+            font-size: 0.9em;
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .risk-score {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .biomarker-legend {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .legend-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 3px solid #00d4aa;
+        }
+
+        .legend-name {
+            color: #00d4aa;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .legend-desc {
+            color: #b3b3b3;
+            font-size: 0.9em;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4aa, #007991);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .summary-cards {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+            
+            .summary-number {
+                font-size: 2em;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">MULE DETECTION SYSTEM</div>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}">Dashboard</a>
+                <a href="{{ url_for('upload') }}">Upload</a>
+                <a href="{{ url_for('analysis') }}">Analysis</a>
+                <a href="{{ url_for('graph_view') }}">Graph</a>
+                <a href="#" class="active">Risk Analysis</a>
+            </div>
+            <div>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Risk Analysis Report</h1>
+            <p style="color: #b3b3b3; font-size: 1.2em;">AI-powered fraud detection and risk assessment</p>
+        </div>
+
+        <div class="summary-cards">
+            <div class="summary-card">
+                <div class="summary-number critical">
+                    {{ risk_scores|selectattr('risk_level', 'equalto', 'Critical')|list|length }}
+                </div>
+                <div class="summary-label">Critical Risk</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number high">
+                    {{ risk_scores|selectattr('risk_level', 'equalto', 'High')|list|length }}
+                </div>
+                <div class="summary-label">High Risk</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number medium">
+                    {{ risk_scores|selectattr('risk_level', 'equalto', 'Medium')|list|length }}
+                </div>
+                <div class="summary-label">Medium Risk</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number low">
+                    {{ risk_scores|selectattr('risk_level', 'equalto', 'Low')|list|length }}
+                </div>
+                <div class="summary-label">Low Risk</div>
+            </div>
+        </div>
+
+        <div class="risk-table-container">
+            <h3 class="table-title">Account Risk Scores</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Account ID</th>
+                        <th>Risk Score</th>
+                        <th>Risk Level</th>
+                        <th>Total Amount</th>
+                        <th>Transactions</th>
+                        <th>Detected Patterns</th>
+                        <th>Risk Factors</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in risk_scores[:15] %}
+                    <tr>
+                        <td><strong>{{ account.account }}</strong></td>
+                        <td class="risk-score">{{ account.risk_score }}%</td>
+                        <td>
+                            <span class="risk-badge" style="background-color: {{ account.color }};">
+                                {{ account.risk_level }}
+                            </span>
+                        </td>
+                        <td>₹{{ "{:,}".format(account.total_amount|int) }}</td>
+                        <td>{{ account.transaction_count }}</td>
+                        <td>
+                            {% if account.patterns %}
+                                {{ account.patterns|join(', ') }}
+                            {% else %}
+                                <em style="color: #888;">None detected</em>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if account.risk_factors %}
+                                <ul style="margin: 0; padding-left: 1rem;">
+                                {% for factor in account.risk_factors[:2] %}
+                                    <li style="font-size: 0.8em; color: #ccc;">{{ factor[:50] }}...</li>
+                                {% endfor %}
+                                </ul>
+                            {% else %}
+                                <em style="color: #888;">None</em>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if risk_scores|length > 15 %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #00d4aa; font-style: italic;">
+                            ... and {{ risk_scores|length - 15 }} more accounts analyzed
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="patterns-container">
+            <h3 style="color: #00d4aa; font-size: 2em; margin-bottom: 1rem; text-align: center;">
+                Detected Fraud Patterns
+            </h3>
+            {% if patterns %}
+                {% for pattern in patterns[:10] %}
+                <div class="pattern-item">
+                    <div class="pattern-title">{{ pattern.pattern }}</div>
+                    <div class="pattern-details">{{ pattern.details }}</div>
+                    <div class="pattern-description">
+                        {{ biomarkers.get(pattern.pattern, {}).get('description', 'Advanced fraud pattern detected') }}
+                    </div>
+                    <div style="margin-top: 0.5rem;">
+                        <span style="color: #FF8800;">Risk Score: {{ pattern.get('risk_score', 50) }}%</span>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if patterns|length > 10 %}
+                <div style="text-align: center; color: #00d4aa; font-style: italic; margin-top: 1rem;">
+                    ... and {{ patterns|length - 10 }} more patterns detected
+                </div>
+                {% endif %}
+            {% else %}
+                <div style="text-align: center; color: #888; font-style: italic; padding: 2rem;">
+                    No specific fraud patterns detected in this dataset.
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="biomarker-legend">
+            <h3 style="color: #00d4aa; font-size: 1.8em; margin-bottom: 1rem; text-align: center;">
+                Fraud Detection Biomarkers
+            </h3>
+            <p style="text-align: center; color: #b3b3b3; margin-bottom: 1rem;">
+                Advanced patterns used by our HGT system to identify sophisticated fraud activities
+            </p>
+            <div class="legend-grid">
+                {% for name, info in biomarkers.items() %}
+                <div class="legend-item">
+                    <div class="legend-name">{{ name }}</div>
+                    <div class="legend-desc">{{ info.description }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="{{ url_for('graph_view') }}" class="nav-btn btn-secondary">
+                ← Network Graph
+            </a>
+            <a href="{{ url_for('analysis') }}" class="nav-btn btn-secondary">
+                Data Analysis
+            </a>
+            <a href="{{ url_for('home') }}" class="nav-btn btn-primary">
+                Dashboard
+            </a>
+        </div>
+    </div>
+</body>
+</html>

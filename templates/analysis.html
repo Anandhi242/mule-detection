@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Analysis - Mule Detection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(0, 212, 170, 0.3);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #00d4aa;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #ddd;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(0, 212, 170, 0.2);
+            color: #00d4aa;
+        }
+
+        .logout-btn {
+            color: #ff6b6b;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ff6b6b;
+            border-radius: 5px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00d4aa, #007991);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #00d4aa;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #b3b3b3;
+            font-size: 1.1em;
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            overflow-x: auto;
+        }
+
+        .table-title {
+            color: #00d4aa;
+            font-size: 2em;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(0, 212, 170, 0.2);
+            color: #00d4aa;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .amount {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .high-amount {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-graph {
+            background: linear-gradient(135deg, #6f42c1, #007bff);
+            color: white;
+        }
+
+        .btn-risk {
+            background: linear-gradient(135deg, #dc3545, #fd7e14);
+            color: white;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .biomarker-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .biomarker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .biomarker-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #00d4aa;
+        }
+
+        .biomarker-name {
+            color: #00d4aa;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .biomarker-desc {
+            color: #b3b3b3;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .action-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">MULE DETECTION SYSTEM</div>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}">Dashboard</a>
+                <a href="{{ url_for('upload') }}">Upload</a>
+                <a href="#" class="active">Analysis</a>
+                <a href="{{ url_for('graph_view') }}">Graph</a>
+                <a href="{{ url_for('risk_analysis') }}">Risk Analysis</a>
+            </div>
+            <div>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Transaction Analysis</h1>
+            <p style="color: #b3b3b3; font-size: 1.2em;">File: {{ filename }}</p>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number">{{ transactions|length }}</div>
+                <div class="stat-label">Total Transactions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ transactions|map(attribute='amount')|sum|int|default(0) }}</div>
+                <div class="stat-label">Total Amount</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ transactions|map(attribute='source')|unique|list|length }}</div>
+                <div class="stat-label">Unique Sources</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ biomarkers|length }}</div>
+                <div class="stat-label">Fraud Biomarkers</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <h2 class="table-title">Transaction Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Source Account</th>
+                        <th>Destination Account</th>
+                        <th>Amount</th>
+                        <th>Timestamp</th>
+                        <th>Device</th>
+                        <th>IP Address</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in transactions[:20] %}
+                    <tr>
+                        <td>{{ txn.get('source', 'N/A') }}</td>
+                        <td>{{ txn.get('destination', 'N/A') }}</td>
+                        <td class="{% if txn.get('amount', 0)|int > 100000 %}high-amount{% else %}amount{% endif %}">
+                            ₹{{ "{:,}".format(txn.get('amount', 0)|int) }}
+                        </td>
+                        <td>{{ txn.get('timestamp', 'N/A') }}</td>
+                        <td>{{ txn.get('device', 'N/A') }}</td>
+                        <td>{{ txn.get('ip', 'N/A') }}</td>
+                        <td>{{ txn.get('remarks', 'N/A') }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if transactions|length > 20 %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #00d4aa; font-style: italic;">
+                            ... and {{ transactions|length - 20 }} more transactions
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="biomarker-info">
+            <h2 style="color: #00d4aa; font-size: 2em; margin-bottom: 1rem; text-align: center;">
+                Fraud Detection Biomarkers
+            </h2>
+            <p style="text-align: center; color: #b3b3b3; margin-bottom: 2rem;">
+                Advanced patterns used to detect sophisticated mule account activities
+            </p>
+            
+            <div class="biomarker-grid">
+                {% for name, info in biomarkers.items() %}
+                <div class="biomarker-item">
+                    <div class="biomarker-name">{{ name }}</div>
+                    <div class="biomarker-desc">{{ info.description }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{{ url_for('graph_view') }}" class="action-btn btn-graph">
+                🌐 View Network Graph
+            </a>
+            <a href="{{ url_for('risk_analysis') }}" class="action-btn btn-risk">
+                ⚠️ Risk Analysis
+            </a>
+            <a href="{{ url_for('upload') }}" class="action-btn btn-back">
+                📁 Upload New File
+            </a>
+        </div>
+    </div>
