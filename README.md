@@ -27,7 +27,6 @@ mkdir uploads static
 
 Run application:
 python app.py
-Open browser to http://localhost:5000
 Usage
 
 Login with credentials:
